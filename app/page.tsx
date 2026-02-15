@@ -93,8 +93,8 @@ export default function Home() {
       <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
       <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
 
-      {countWithTasks >= disciplines.length/2  && (
-        <div className="bg-amber-500/20 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm">
+      {countWithTasks > disciplines.length/2  && (
+        <div className="bg-amber-500/20 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">У тебя много невыполненных заданий!</p>
         </div>
       )}
