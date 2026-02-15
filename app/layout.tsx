@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: "ДомашкиМИРЭА",
   description: "Учёт домашних заданий",
   manifest: "/manifest.json",
-  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
