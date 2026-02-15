@@ -90,9 +90,35 @@ export default function Home() {
     setEdit(newD);
   };
 
+  // обновление
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setUpdateAvailable(true);
+    window.addEventListener("sw-update", handler);
+    return () => window.removeEventListener("sw-update", handler);
+  }, []);
+
+  const refreshApp = () => {
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      reg?.waiting?.postMessage("SKIP_WAITING");
+      window.location.reload();
+    });
+  };
+
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
       <h1 className="text-3xl font-bold mb-4">Домашки</h1>
+
+      {updateAvailable && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-xl shadow-xl flex gap-3 items-center">
+          <span>Доступно обновление</span>
+
+          <Button size="sm" color="primary" onPress={refreshApp}>
+            Обновить
+          </Button>
+        </div>
+      )}
 
       <section className="max-w-3xl w-full flex flex-col gap-2">
         {sorted.map((d) => (

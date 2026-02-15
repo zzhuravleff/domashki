@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import "../styles/globals.css";
 import { Inter } from 'next/font/google'
+import ClientProviders from "@/components/ClientProviders";
  
 const inter = Inter({
   subsets: ['latin'],
@@ -21,8 +21,7 @@ export default function RootLayout({
   return (
     <html lang="ru" className={inter.className}>
       <body>
-          {children}
-        <ServiceWorkerRegister />
+          <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
