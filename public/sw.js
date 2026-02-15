@@ -1,45 +1,24 @@
-const CACHE = "domashki-static-v1.0.13";
-const STATIC_ASSETS = [
-  "/manifest.json",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/" // главная страница
-];
+importScripts('/lib/version.js'); // или просто вставь как комментарий/строку, если не используешь import
 
+const CACHE = `domashki-cache-v${version}`;
+const urlsToCache = ["/", "/index.html"];
+
+// установка
 self.addEventListener("install", (event) => {
-  self.skipWaiting(); // новая версия сразу готова
+  self.skipWaiting(); // сразу активировать
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
+// активация
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.map((k) => k !== CACHE && caches.delete(k)))
-    )
-  );
-  self.clients.claim();
+  event.waitUntil(self.clients.claim());
 });
 
+// fetch
 self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
-
-  if (url.pathname.startsWith("/_next/")) return;
-
-  if (event.request.mode === "navigate") {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
   event.respondWith(
-    caches.match(event.request).then((res) => res || fetch(event.request))
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
-});
-
-// получаем сообщение от клиента для skipWaiting
-self.addEventListener("message", (event) => {
-  if (event.data === "skipWaiting") {
-    self.skipWaiting();
-  }
 });

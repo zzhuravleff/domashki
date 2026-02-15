@@ -7,6 +7,7 @@ import EditDisciplineDialog from "@/components/EditDisciplineDialog";
 import DisciplineCard from "@/components/DisciplineCard";
 import { Discipline } from "@/types";
 import { getDisciplines, saveDisciplines } from "@/lib/storage";
+import { version } from "@/lib/version";
 
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
@@ -82,7 +83,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
-      <h1 className="text-3xl font-bold mb-4">Домашки</h1>
+      <p>Версия: {version}</p>
+      <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
+      <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
 
       <section className="max-w-3xl w-full flex flex-col gap-2">
         {sorted.map((d) => (
