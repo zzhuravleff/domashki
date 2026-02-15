@@ -105,11 +105,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4 items-center relative">
+      <OfflineBanner setOffline={setOffline} />
+      
       <Chip variant="flat">Версия: {version}</Chip>
       <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
       <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
-
-      <OfflineBanner setOffline={setOffline} />
 
       {countWithTasks > disciplines.length/2  && (
         <div className="bg-amber-200/60 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
