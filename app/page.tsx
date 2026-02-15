@@ -10,6 +10,8 @@ import { getDisciplines, saveDisciplines } from "@/lib/storage";
 import { version } from "@/lib/version";
 import { ExportButton } from "@/components/ExportButton";
 import { ImportButton } from "@/components/ImportButton";
+import { ClearAllButton } from "@/components/ClearDisciplineButton";
+import { Chip } from "@heroui/chip";
 
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
@@ -83,11 +85,19 @@ export default function Home() {
     setEdit(newD);
   };
 
+  const countWithTasks = disciplines.filter(d => d.task.trim() !== "").length;
+
   return (
-    <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
-      <p>Версия: {version}</p>
+    <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4 items-center relative">
+      <Chip variant="flat">Версия: {version}</Chip>
       <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
       <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
+
+      {countWithTasks >= disciplines.length/2  && (
+        <div className="bg-amber-500/20 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm">
+          <p className="text-lg font-medium">У тебя много невыполненных заданий!</p>
+        </div>
+      )}
 
       <section className="max-w-3xl w-full flex flex-col gap-2">
         {sorted.map((d) => (
@@ -106,20 +116,24 @@ export default function Home() {
         ))}
       </section>
 
-      <Button
-        color="default"
-        className="font-medium"
-        variant="flat"
-        size="lg"
-        radius="full"
-        onPress={() => setAddOpen(true)}
-      >
-        Добавить дисциплину
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button
+          color="default"
+          className="font-medium"
+          variant="flat"
+          size="lg"
+          radius="full"
+          onPress={() => setAddOpen(true)}
+        >
+          Добавить дисциплину
+        </Button>
 
-      <div className="flex gap-2">
-        <ExportButton />
-        <ImportButton onImport={(data) => setDisciplines(data)} />
+        <div className="flex gap-2">
+          <ExportButton />
+          <ImportButton onImport={(data) => setDisciplines(data)} />
+        </div>
+
+        {disciplines.length > 0 && <ClearAllButton onClear={() => setDisciplines([])} />}
       </div>
 
       <AddDisciplineDialog
