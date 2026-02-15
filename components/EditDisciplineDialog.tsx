@@ -133,7 +133,7 @@ export default function EditDisciplineDialog({
           </Button>
 
           <Button
-            color="warning"
+            color="success"
             radius="full"
             size="lg"
             className="font-medium"
