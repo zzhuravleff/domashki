@@ -39,7 +39,6 @@ export default function DisciplineCard({ discipline, onDone, onEdit }: Props) {
                 key={d}
                 radius="full"
                 variant="faded"
-                color="warning"
               >
                 {daysLabels[d - 1]} {/* d: 1..7 */}
               </Chip>

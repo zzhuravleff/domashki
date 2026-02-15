@@ -1,4 +1,4 @@
-const CACHE = "domashki-static-v1.0.12";
+const CACHE = "domashki-static-v1.0.13";
 const STATIC_ASSETS = [
   "/manifest.json",
   "/icons/icon-192.png",
