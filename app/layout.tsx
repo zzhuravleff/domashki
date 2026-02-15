@@ -5,6 +5,7 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { Button } from "@heroui/button";
 import { Inter } from 'next/font/google';
 import "../styles/globals.css";
+import Head from "next/head";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -15,7 +16,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [swRegistration, setSWRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   return (
-    <html lang="ru" className={inter.className}>
+    <>
+    <Head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="theme-color" content="#f3f4f6" />
+        <link rel="manifest" href="/manifest.json" />
+    </Head>
+    <html lang="ru" className={`bg-gray-100 ${inter.className}`}>
       <body>
         {children}
 
@@ -48,5 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </body>
     </html>
+    </>
   );
 }

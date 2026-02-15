@@ -99,7 +99,7 @@ export default function Home() {
         </div>
       )}
 
-      {countWithTasks == 0 && (
+      {countWithTasks == 0 && disciplines.length > 0 && (
         <div className="bg-green-200/60 text-green-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">Так держать! У тебя нет невыполненных заданий.</p>
         </div>
