@@ -94,8 +94,14 @@ export default function Home() {
       <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
 
       {countWithTasks > disciplines.length/2  && (
-        <div className="bg-amber-500/20 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
+        <div className="bg-amber-200/60 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">У тебя много невыполненных заданий!</p>
+        </div>
+      )}
+
+      {countWithTasks == 0 && (
+        <div className="bg-green-200/60 text-green-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
+          <p className="text-lg font-medium">Так держать! У тебя нет невыполненных заданий.</p>
         </div>
       )}
 
