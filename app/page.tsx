@@ -12,7 +12,6 @@ import { ExportButton } from "@/components/ExportButton";
 import { ImportButton } from "@/components/ImportButton";
 import { ClearAllButton } from "@/components/ClearDisciplineButton";
 import { Chip } from "@heroui/chip";
-import OfflineBanner from "@/components/OfflineBanner";
 
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
@@ -86,32 +85,10 @@ export default function Home() {
     setEdit(newD);
   };
 
-  const [offline, setOffline] = useState(!navigator.onLine);
-
-  const handleSave = (task: string, isLongTerm: boolean, days?: number[]) => {
-    if (offline) {
-      alert("Нет подключения к сети. Изменения недоступны.");
-      return;
-    }
-
-    update(
-      disciplines.map((x) =>
-        edit && x.id === edit.id ? { ...x, task, isLongTerm, days } : x
-      )
-    );
-  };
-
   const countWithTasks = disciplines.filter(d => d.task.trim() !== "").length;
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4 items-center relative">
-      <OfflineBanner setOffline={setOffline} />
-      {offline && (
-        <div className="h-16">
-
-        </div>
-      )}
-      
       <Chip variant="flat">Версия: {version}</Chip>
       <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
       <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
