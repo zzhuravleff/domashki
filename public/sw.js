@@ -2,44 +2,35 @@ importScripts('/lib/version.js'); // или просто вставь как к�
 
 
 const CACHE = `domashki-cache-v${version}`;
-const urlsToCache = ["/", "/index.html", "/manifest.json", "/favicon.ico"];
+const urlsToCache = ["/", "/index.html", "/manifest.json", "/favicon.ico", "/_next/static/*"];
 
-// Установка Service Worker
+// установка
 self.addEventListener("install", (event) => {
-  self.skipWaiting(); // сразу активировать
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
-// Активация
+// активация
 self.addEventListener("activate", (event) => {
-  // удаляем старые кэши
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE)
-          .map((key) => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
-  );
+  event.waitUntil(self.clients.claim());
 });
 
-// Fetch — отдаём из кэша, если offline
+// fetch
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    caches.match(event.request).then((cached) => {
+      // Если есть в кэше — возвращаем его
+      if (cached) return cached;
+
+      // Иначе пытаемся fetch
+      return fetch(event.request).catch(() => {
+        // Если fetch упал (offline) и это запрос на HTML — возвращаем кэшированный /
+        if (event.request.mode === "navigate") {
+          return caches.match("/");
+        }
+      });
+    })
   );
 });
-
-// Отправка сообщения клиенту о новой версии
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "CHECK_VERSION") {
-    event.source.postMessage({ type: "VERSION", version });
-  }
-});
-
-// Логика для уведомления о новой версии:
-// когда регистрируешь SW в ServiceWorkerRegister.tsx, нужно отправлять "CHECK_VERSION"
-// и если версия отличается от сохранённой на клиенте, показывать пользователю окно обновления
