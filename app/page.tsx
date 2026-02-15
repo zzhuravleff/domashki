@@ -142,6 +142,7 @@ export default function Home() {
         className="font-medium"
         variant="light"
         size="lg"
+        radius="full"
         onPress={() => setAddOpen(true)}
       >
         Добавить дисциплину
