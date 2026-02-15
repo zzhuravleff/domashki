@@ -92,26 +92,47 @@ export default function Home() {
 
   // обновление
   const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [waitingWorker, setWaitingWorker] =
+    useState<ServiceWorker | null>(null);
 
   useEffect(() => {
-    const handler = () => setUpdateAvailable(true);
-    window.addEventListener("sw-update", handler);
-    return () => window.removeEventListener("sw-update", handler);
+    if (!("serviceWorker" in navigator)) return;
+
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      if (reg?.waiting) {
+        setWaitingWorker(reg.waiting);
+        setUpdateAvailable(true);
+      }
+
+      reg?.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            setWaitingWorker(newWorker);
+            setUpdateAvailable(true);
+          }
+        });
+      });
+    });
   }, []);
 
   const refreshApp = () => {
-    navigator.serviceWorker.getRegistration().then((reg) => {
-      reg?.waiting?.postMessage("SKIP_WAITING");
-      window.location.reload();
-    });
+    waitingWorker?.postMessage("SKIP_WAITING");
+    window.location.reload();
   };
+
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
       <h1 className="text-3xl font-bold mb-4">Домашки</h1>
 
       {updateAvailable && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-xl shadow-xl flex gap-3 items-center">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-xl shadow-xl flex gap-3 items-center z-50">
           <span>Доступно обновление</span>
 
           <Button size="sm" color="primary" onPress={refreshApp}>

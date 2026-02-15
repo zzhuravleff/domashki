@@ -1,13 +1,25 @@
-const CACHE = "domashki-cache-v1";
+const CACHE = "domashki-cache-v1.0.0";
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((cache) => cache.add("/"))
-  );
+// сразу активировать новую версию
+self.addEventListener("install", () => {
+  self.skipWaiting();
 });
 
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
+// взять контроль над вкладками
+self.addEventListener("activate", () => {
+  clients.claim();
+});
+
+// принять команду обновления
+self.addEventListener("message", (event) => {
+  if (event.data === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+// простое кэширование
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((resp) => resp || fetch(event.request))
   );
 });
