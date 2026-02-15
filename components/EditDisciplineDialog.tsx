@@ -4,7 +4,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@herou
 import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
 import {Checkbox} from "@heroui/checkbox";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Discipline } from "@/types";
 
 type Props = {

@@ -11,7 +11,6 @@ import { getDisciplines, saveDisciplines } from "@/lib/storage";
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
   setDisciplines(getDisciplines());
   }, []);
   const [addOpen, setAddOpen] = useState(false);
@@ -68,7 +67,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
-      <h1 className="text-3xl font-bold mb-4">ДомашкиМИРЭА</h1>
+      <h1 className="text-3xl font-bold mb-4">Домашки</h1>
 
       <section className="max-w-3xl flex flex-col gap-2">
         {sorted.map((d) => (

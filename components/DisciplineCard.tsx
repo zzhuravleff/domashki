@@ -20,7 +20,7 @@ export default function DisciplineCard({ discipline, onDone, onEdit }: Props) {
 
   return (
     <div className="bg-white/70 shadow-none rounded-3xl p-3 flex gap-2 justify-between">
-      <div className="">
+      <div className="flex flex-col">
           <h3 className={`font-semibold text-lg line-clamp-2 leading-5 ${color}`}>{name}</h3>
           {task && (
             <p className="text-base text-gray-600 mt-1 whitespace-pre-wrap">
@@ -29,7 +29,7 @@ export default function DisciplineCard({ discipline, onDone, onEdit }: Props) {
           )}
         </div>
         <div className="flex flex-col gap-2">
-          {!isLongTerm && task && (
+          {task && (
             <Button size="lg" color="primary" radius="full"  onPress={onDone} className="font-medium">
               Готово
             </Button>
