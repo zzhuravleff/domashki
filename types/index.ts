@@ -9,4 +9,5 @@ export type Discipline = {
   name: string;
   task: string;
   isLongTerm: boolean;
+  days?: number[]; // ← новое
 };

@@ -10,18 +10,43 @@ import { getDisciplines, saveDisciplines } from "@/lib/storage";
 
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
-  useEffect(() => {
-  setDisciplines(getDisciplines());
-  }, []);
   const [addOpen, setAddOpen] = useState(false);
   const [edit, setEdit] = useState<Discipline | null>(null);
+
+  // загрузка из localStorage
+  useEffect(() => {
+    setDisciplines(getDisciplines());
+  }, []);
 
   const update = (data: Discipline[]) => {
     setDisciplines(data);
     saveDisciplines(data);
   };
 
-  // сортировка
+  /**
+   * Вычисляем через сколько дней будет ближайшая пара
+   * меньше = выше в списке
+   */
+  const getNearestDayDistance = (days?: number[]) => {
+    if (!days || days.length === 0) return 999;
+
+    const today = new Date().getDay(); // 0 вс, 1 пн ...
+    const normalizedToday = today === 0 ? 7 : today; // делаем 1-7
+
+    let min = 999;
+
+    for (const d of days) {
+      const diff = d >= normalizedToday
+        ? d - normalizedToday
+        : 7 - normalizedToday + d;
+
+      if (diff < min) min = diff;
+    }
+
+    return min;
+  };
+
+  // 🔥 новая сортировка
   const sorted = useMemo(() => {
     const red: Discipline[] = [];
     const purple: Discipline[] = [];
@@ -34,7 +59,7 @@ export default function Home() {
     });
 
     const sortFn = (a: Discipline, b: Discipline) =>
-      a.name.localeCompare(b.name);
+      getNearestDayDistance(a.days) - getNearestDayDistance(b.days);
 
     return [
       ...red.sort(sortFn),
@@ -43,11 +68,12 @@ export default function Home() {
     ];
   }, [disciplines]);
 
+  // выбор дисциплины из автокомплита
   const handleSelect = (name: string) => {
     const existing = disciplines.find((d) => d.name === name);
 
     if (existing) {
-      // логика: не создаём дубликат, открываем редактирование
+      // если есть → редактируем
       setEdit(existing);
       return;
     }
@@ -57,19 +83,18 @@ export default function Home() {
       name,
       task: "",
       isLongTerm: false,
+      days: [], // важно
     };
 
     update([...disciplines, newD]);
     setEdit(newD);
   };
 
-  
-
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
       <h1 className="text-3xl font-bold mb-4">Домашки</h1>
 
-      <section className="max-w-3xl flex flex-col gap-2">
+      <section className="max-w-3xl w-full flex flex-col gap-2">
         {sorted.map((d) => (
           <DisciplineCard
             key={d.id}
@@ -82,12 +107,17 @@ export default function Home() {
               );
             }}
             onEdit={() => setEdit(d)}
-            
           />
         ))}
       </section>
 
-      <Button color="default" className="font-medium" variant="light" size="lg" onPress={() => setAddOpen(true)}>
+      <Button
+        color="default"
+        className="font-medium"
+        variant="light"
+        size="lg"
+        onPress={() => setAddOpen(true)}
+      >
         Добавить дисциплину
       </Button>
 
@@ -102,10 +132,12 @@ export default function Home() {
         discipline={edit}
         isOpen={!!edit}
         onClose={() => setEdit(null)}
-        onSave={(task, isLongTerm) => {
+        onSave={(task, isLongTerm, days) => {
           update(
             disciplines.map((x) =>
-              edit && x.id === edit.id ? { ...x, task, isLongTerm } : x
+              edit && x.id === edit.id
+                ? { ...x, task, isLongTerm, days }
+                : x
             )
           );
         }}
