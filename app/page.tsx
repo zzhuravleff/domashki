@@ -8,6 +8,8 @@ import DisciplineCard from "@/components/DisciplineCard";
 import { Discipline } from "@/types";
 import { getDisciplines, saveDisciplines } from "@/lib/storage";
 import { version } from "@/lib/version";
+import { ExportButton } from "@/components/ExportButton";
+import { ImportButton } from "@/components/ImportButton";
 
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
@@ -107,13 +109,18 @@ export default function Home() {
       <Button
         color="default"
         className="font-medium"
-        variant="light"
+        variant="flat"
         size="lg"
         radius="full"
         onPress={() => setAddOpen(true)}
       >
         Добавить дисциплину
       </Button>
+
+      <div className="flex gap-2">
+        <ExportButton />
+        <ImportButton onImport={(data) => setDisciplines(data)} />
+      </div>
 
       <AddDisciplineDialog
         isOpen={addOpen}
