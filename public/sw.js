@@ -1,9 +1,10 @@
 importScripts('/lib/version.js'); // или просто вставь как комментарий/строку, если не используешь import
 
-const CACHE = `domashki-cache-v${version}`;
-const urlsToCache = ["/", "/index.html"];
 
-// установка
+const CACHE = `domashki-cache-v${version}`;
+const urlsToCache = ["/", "/index.html", "/manifest.json", "/favicon.ico"];
+
+// Установка Service Worker
 self.addEventListener("install", (event) => {
   self.skipWaiting(); // сразу активировать
   event.waitUntil(
@@ -11,14 +12,34 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// активация
+// Активация
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  // удаляем старые кэши
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE)
+          .map((key) => caches.delete(key))
+      )
+    ).then(() => self.clients.claim())
+  );
 });
 
-// fetch
+// Fetch — отдаём из кэша, если offline
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
+// Отправка сообщения клиенту о новой версии
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CHECK_VERSION") {
+    event.source.postMessage({ type: "VERSION", version });
+  }
+});
+
+// Логика для уведомления о новой версии:
+// когда регистрируешь SW в ServiceWorkerRegister.tsx, нужно отправлять "CHECK_VERSION"
+// и если версия отличается от сохранённой на клиенте, показывать пользователю окно обновления

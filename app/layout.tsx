@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [swRegistration, setSWRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   return (
     <>
@@ -25,35 +25,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </Head>
     <html lang="ru" className={`bg-gray-100 ${inter.className}`}>
       <body>
-        {children}
+        <ServiceWorkerRegister
+          setRegistration={setRegistration}
+          onUpdate={() => setUpdateAvailable(true)}
+        />
 
-        {/* Модальное окно обновления */}
         {updateAvailable && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 flex flex-col items-center gap-4 max-w-xs">
-              <p className="text-center font-medium text-lg">
-                Доступно обновление приложения
-              </p>
-              <Button
-                color="primary"
-                onPress={() => {
-                  if (swRegistration?.waiting) {
-                    swRegistration.waiting.postMessage({ type: "SKIP_WAITING" });
-                    window.location.reload();
-                  }
-                }}
-              >
-                Обновить
-              </Button>
-            </div>
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-yellow-300 p-4 rounded-xl shadow-lg flex gap-4">
+            <span>Доступно обновление!</span>
+            <button
+              className="bg-green-500 text-white px-3 py-1 rounded"
+              onClick={() => {
+                if (!registration?.waiting) return;
+                registration.waiting.postMessage({ type: "SKIP_WAITING" });
+                window.location.reload();
+              }}
+            >
+              Обновить
+            </button>
           </div>
         )}
 
-        {/* Здесь подключаем SW как компонент */}
-        <ServiceWorkerRegister
-          onUpdate={() => setUpdateAvailable(true)}
-          setRegistration={setSWRegistration}
-        />
+        {children}
       </body>
     </html>
     </>
