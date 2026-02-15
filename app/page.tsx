@@ -23,30 +23,23 @@ export default function Home() {
     saveDisciplines(data);
   };
 
-  /**
-   * Вычисляем через сколько дней будет ближайшая пара
-   * меньше = выше в списке
-   */
+  // вычисляем ближайший день пары
   const getNearestDayDistance = (days?: number[]) => {
     if (!days || days.length === 0) return 999;
-
     const today = new Date().getDay(); // 0 вс, 1 пн ...
     const normalizedToday = today === 0 ? 7 : today; // делаем 1-7
 
     let min = 999;
-
     for (const d of days) {
       const diff = d >= normalizedToday
         ? d - normalizedToday
         : 7 - normalizedToday + d;
-
       if (diff < min) min = diff;
     }
-
     return min;
   };
 
-  // 🔥 новая сортировка
+  // сортировка
   const sorted = useMemo(() => {
     const red: Discipline[] = [];
     const purple: Discipline[] = [];
@@ -68,12 +61,9 @@ export default function Home() {
     ];
   }, [disciplines]);
 
-  // выбор дисциплины из автокомплита
   const handleSelect = (name: string) => {
     const existing = disciplines.find((d) => d.name === name);
-
     if (existing) {
-      // если есть → редактируем
       setEdit(existing);
       return;
     }
@@ -83,63 +73,16 @@ export default function Home() {
       name,
       task: "",
       isLongTerm: false,
-      days: [], // важно
+      days: [],
     };
 
     update([...disciplines, newD]);
     setEdit(newD);
   };
 
-  // обновление
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [waitingWorker, setWaitingWorker] =
-    useState<ServiceWorker | null>(null);
-
-  useEffect(() => {
-    if (!("serviceWorker" in navigator)) return;
-
-    navigator.serviceWorker.getRegistration().then((reg) => {
-      if (reg?.waiting) {
-        setWaitingWorker(reg.waiting);
-        setUpdateAvailable(true);
-      }
-
-      reg?.addEventListener("updatefound", () => {
-        const newWorker = reg.installing;
-        if (!newWorker) return;
-
-        newWorker.addEventListener("statechange", () => {
-          if (
-            newWorker.state === "installed" &&
-            navigator.serviceWorker.controller
-          ) {
-            setWaitingWorker(newWorker);
-            setUpdateAvailable(true);
-          }
-        });
-      });
-    });
-  }, []);
-
-  const refreshApp = () => {
-    waitingWorker?.postMessage("SKIP_WAITING");
-    window.location.reload();
-  };
-
-
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-2 items-center">
       <h1 className="text-3xl font-bold mb-4">Домашки</h1>
-
-      {updateAvailable && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-xl shadow-xl flex gap-3 items-center z-50">
-          <span>Доступно обновление</span>
-
-          <Button size="sm" color="primary" onPress={refreshApp}>
-            Обновить
-          </Button>
-        </div>
-      )}
 
       <section className="max-w-3xl w-full flex flex-col gap-2">
         {sorted.map((d) => (

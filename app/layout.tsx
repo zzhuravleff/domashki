@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import "../styles/globals.css";
-import { Inter } from 'next/font/google'
- 
+import { Inter } from 'next/font/google';
+import ServiceWorkerUpdater from "@/components/ServiceWorkerUpdater";
+
 const inter = Inter({
   subsets: ['latin'],
-})
+});
 
 export const metadata: Metadata = {
   title: "ДомашкиМИРЭА",
@@ -21,8 +21,8 @@ export default function RootLayout({
   return (
     <html lang="ru" className={inter.className}>
       <body>
-          {children}
-        <ServiceWorkerRegister />
+        {children}
+        <ServiceWorkerUpdater />
       </body>
     </html>
   );
