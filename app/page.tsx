@@ -106,6 +106,11 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4 items-center relative">
       <OfflineBanner setOffline={setOffline} />
+      {offline && (
+        <div className="h-16">
+
+        </div>
+      )}
       
       <Chip variant="flat">Версия: {version}</Chip>
       <h1 className="text-3xl font-bold -mb-2">Домашки</h1>

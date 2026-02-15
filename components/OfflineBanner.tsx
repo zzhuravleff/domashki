@@ -26,22 +26,11 @@ export default function OfflineBanner({
     };
   }, [setOffline]);
 
-  // высота плашки
-  const bannerHeight = 40;
+  if (!offline) return null;
 
   return (
-    <>
-      {offline && (
-        <div
-          className="w-full bg-red-500/60 text-white text-center p-2 shadow-lg fixed top-0 z-20 backdrop-blur-2xl"
-          style={{ height: bannerHeight, lineHeight: `${bannerHeight}px` }}
-        >
-          Нет подключения к сети. Редактирование недоступно.
-        </div>
-      )}
-
-      {/* чтобы контент смещался вниз */}
-      <div style={{ height: offline ? bannerHeight : 0 }} />
-    </>
+    <div className="fixed top-0 left-0 w-full bg-red-500 text-white text-center p-2 z-50 shadow-lg">
+      Нет подключения к сети. Редактирование недоступно.
+    </div>
   );
 }
