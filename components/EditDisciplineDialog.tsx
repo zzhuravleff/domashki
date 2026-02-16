@@ -107,18 +107,17 @@ export default function EditDisciplineDialog({
 
                     {/* кнопки пар под выбранным днём */}
                     {dayActive && (
-                      <div className="flex gap-1 flex-wrap">
+                      <div className="flex gap-1 flex-wrap items-center">
                         {pairs.map((p) => {
                           const pairActive = schedule[day]?.includes(p);
                           return (
                             <Button
                               key={p}
-                              size="sm"
-                              radius="full"
+                              radius="sm"
                               variant={pairActive ? "bordered" : "flat"}
                               color={pairActive ? "primary" : "default"}
                               onPress={() => togglePair(day, p)}
-                              className="flex items-center justify-center w-6 h-6 p-0 min-w-0 text-xs"
+                              className="flex items-center justify-center w-6 h-7 p-0 min-w-0 text-xs fomt-medium"
                             >{pairActive && p}
                             </Button>
                           );
