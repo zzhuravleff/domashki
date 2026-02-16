@@ -116,10 +116,15 @@ export default function Home() {
   const countWithTasks = disciplines.filter(d => d.task.trim() !== "").length;
 
   return (
+    <>
+    <div className="fixed h-16 bg-gradient-to-b from-gray-100 to-transparent w-7xl mt-0 top-0 z-10"></div>
+    {((countWithTasks > disciplines.length / 2) || (countWithTasks === 0 && disciplines.length > 0)) && (<div className="fixed h-24 bg-gradient-to-b from-gray-100 via-gray-100 to-transparent w-7xl mt-0 top-0 z-10"></div>
+    )}
+
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4 items-center relative">
-      <Chip variant="flat">Версия: {version}</Chip>
-      <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
-      <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
+      <Chip variant="flat" className="z-10">Версия: {version}</Chip>
+      <h1 className="text-3xl font-bold -mb-2 z-10">Домашки</h1>
+      <p className="mb-4 z-10">Всего дисциплин: {disciplines.length}</p>
 
       {countWithTasks > disciplines.length / 2 && (
         <div className="bg-amber-200/60 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
@@ -197,5 +202,6 @@ export default function Home() {
         }}
       />
     </main>
+    </>
   );
 }
