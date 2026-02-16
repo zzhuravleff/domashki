@@ -86,16 +86,16 @@ export default function EditDisciplineDialog({
           <div>
             <p className="text-sm mb-2 text-default-500">Дни занятий</p>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap gap-1">
               {daysLabels.map((label, i) => {
                 const day = i + 1;
                 const dayActive = !!schedule[day];
 
                 return (
-                  <div key={day} className="flex flex-col gap-1">
+                  <div key={day} className="flex gap-1">
                     {/* кнопка дня */}
                     <Button
-                      className="font-medium px-2"
+                      className="font-medium"
                       size="md"
                       radius="full"
                       variant={dayActive ? "solid" : "flat"}
@@ -107,20 +107,19 @@ export default function EditDisciplineDialog({
 
                     {/* кнопки пар под выбранным днём */}
                     {dayActive && (
-                      <div className="flex gap-2 pl-6 flex-wrap">
+                      <div className="flex gap-1 flex-wrap">
                         {pairs.map((p) => {
                           const pairActive = schedule[day]?.includes(p);
                           return (
                             <Button
                               key={p}
-                              className="font-medium px-2"
                               size="sm"
                               radius="full"
-                              variant={pairActive ? "solid" : "flat"}
+                              variant={pairActive ? "bordered" : "flat"}
                               color={pairActive ? "primary" : "default"}
                               onPress={() => togglePair(day, p)}
-                            >
-                              {p}
+                              className="flex items-center justify-center w-6 h-6 p-0 min-w-0 text-xs"
+                            >{pairActive && p}
                             </Button>
                           );
                         })}
