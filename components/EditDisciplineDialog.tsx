@@ -20,12 +20,13 @@ type Props = {
   onSave: (
     task: string,
     isLongTerm: boolean,
-    days: number[]
+    schedule: Record<number, number[]>
   ) => void;
   onDelete?: () => void;
 };
 
 const daysLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+const pairs = [1, 2, 3, 4, 5, 6]; // номера пар
 
 export default function EditDisciplineDialog({
   discipline,
@@ -36,72 +37,96 @@ export default function EditDisciplineDialog({
 }: Props) {
   const [task, setTask] = useState("");
   const [longTerm, setLongTerm] = useState(false);
-  const [days, setDays] = useState<number[]>([]);
+  const [schedule, setSchedule] = useState<Record<number, number[]>>({});
 
   // обновляем состояние, когда открываем другую дисциплину
   useEffect(() => {
     if (!discipline) return;
     setTask(discipline.task ?? "");
     setLongTerm(discipline.isLongTerm ?? false);
-    setDays(discipline.days ?? []);
+    setSchedule(discipline.schedule ?? {});
   }, [discipline?.id]);
 
   if (!discipline) return null;
 
-  function toggle(day: number) {
-    setDays((prev) =>
-      prev.includes(day)
-        ? prev.filter((d) => d !== day)
-        : [...prev, day]
-    );
+  function toggleDay(day: number) {
+    setSchedule((prev) => {
+      const copy = { ...prev };
+      if (copy[day]) delete copy[day]; // выключаем день
+      else copy[day] = []; // включаем день без пар
+      return copy;
+    });
+  }
+
+  function togglePair(day: number, pair: number) {
+    setSchedule((prev) => {
+      const dayPairs = prev[day] ?? [];
+      const newPairs = dayPairs.includes(pair)
+        ? dayPairs.filter((p) => p !== pair)
+        : [...dayPairs, pair];
+      return { ...prev, [day]: newPairs };
+    });
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      className="rounded-3xl"
-      placement="auto"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} className="rounded-3xl" placement="auto">
       <ModalContent className="p-4 gap-4">
         <ModalHeader className="p-0 m-0 pb-2 line-clamp-2 leading-5 max-w-72">
           {discipline.name}
         </ModalHeader>
 
         <ModalBody className="p-0 m-0 space-y-4">
-          <Textarea
-            label="Задание"
-            value={task}
-            onValueChange={setTask}
-          />
+          <Textarea label="Задание" value={task} onValueChange={setTask} />
 
           <Checkbox isSelected={longTerm} onValueChange={setLongTerm}>
             Долгосрочно
           </Checkbox>
 
-          {/* дни недели */}
+          {/* дни недели и пары */}
           <div>
-            <p className="text-sm mb-2 text-default-500">
-              Дни занятий
-            </p>
+            <p className="text-sm mb-2 text-default-500">Дни занятий</p>
 
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-col gap-3">
               {daysLabels.map((label, i) => {
                 const day = i + 1;
-                const active = days.includes(day);
+                const dayActive = !!schedule[day];
 
                 return (
-                  <Button
-                    key={day}
-                    className="font-medium px-0"
-                    size="md"
-                    radius="full"
-                    variant={active ? "solid" : "flat"}
-                    color={active ? "primary" : "default"}
-                    onPress={() => toggle(day)}
-                  >
-                    {label}
-                  </Button>
+                  <div key={day} className="flex flex-col gap-1">
+                    {/* кнопка дня */}
+                    <Button
+                      className="font-medium px-2"
+                      size="md"
+                      radius="full"
+                      variant={dayActive ? "solid" : "flat"}
+                      color={dayActive ? "primary" : "default"}
+                      onPress={() => toggleDay(day)}
+                    >
+                      {label}
+                    </Button>
+
+                    {/* кнопки пар под выбранным днём */}
+                    {dayActive && (
+                      <div className="flex gap-2 pl-6 flex-wrap">
+                        {pairs.map((p) => {
+                          const pairActive = schedule[day]?.includes(p);
+                          return (
+                            <Button
+                              key={p}
+                              className="font-medium px-2"
+                              size="sm"
+                              radius="full"
+                              variant={pairActive ? "solid" : "flat"}
+                              color={pairActive ? "primary" : "default"}
+                              onPress={() => togglePair(day, p)}
+                            >
+                              {p}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -138,7 +163,7 @@ export default function EditDisciplineDialog({
             size="lg"
             className="font-medium"
             onPress={() => {
-              onSave(task, longTerm, days);
+              onSave(task, longTerm, schedule);
               onClose();
             }}
           >

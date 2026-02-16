@@ -13,12 +13,22 @@ import { ImportButton } from "@/components/ImportButton";
 import { ClearAllButton } from "@/components/ClearDisciplineButton";
 import { Chip } from "@heroui/chip";
 
+// Время пар
+const PAIR_TIMES: Record<number, [number, number]> = {
+    1: [9, 0],
+    2: [10, 30],
+    3: [12, 40],
+    4: [14, 20],
+    5: [15, 50],
+    6: [17, 50],
+  };
+  const BUFFER = 15; // 15 минут после начала пары
+
 export default function Home() {
   const [disciplines, setDisciplines] = useState<Discipline[]>([]);
   const [addOpen, setAddOpen] = useState(false);
   const [edit, setEdit] = useState<Discipline | null>(null);
 
-  // загрузка из localStorage
   useEffect(() => {
     setDisciplines(getDisciplines());
   }, []);
@@ -28,23 +38,43 @@ export default function Home() {
     saveDisciplines(data);
   };
 
-  // вычисляем ближайший день пары
-  const getNearestDayDistance = (days?: number[]) => {
-    if (!days || days.length === 0) return 999;
-    const today = new Date().getDay(); // 0 вс, 1 пн ...
-    const normalizedToday = today === 0 ? 7 : today; // делаем 1-7
+  // вычисляем "расстояние" до ближайшей пары с учётом 15 минут буфера
+  // возвращает "расстояние до ближайшей пары" или Infinity, если все пары уже прошли
+  const getNearestPairDistance = (schedule?: Record<number, number[]>) => {
+    if (!schedule) return Infinity;
 
-    let min = 999;
-    for (const d of days) {
-      const diff = d >= normalizedToday
-        ? d - normalizedToday
-        : 7 - normalizedToday + d;
-      if (diff < min) min = diff;
+    const now = new Date();
+    const today = now.getDay() === 0 ? 7 : now.getDay(); // 1-7
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    let minDistance = Infinity;
+
+    for (const dayStr in schedule) {
+      const day = parseInt(dayStr, 10);
+      const pairs = schedule[day] ?? [];
+
+      for (const p of pairs) {
+        const [hour, minute] = PAIR_TIMES[p];
+        const pairMinutes = hour * 60 + minute;
+
+        let diffDays = day - today;
+        if (diffDays < 0) diffDays += 7;
+
+        const totalMinutes = diffDays * 24 * 60 + pairMinutes - currentMinutes;
+
+        // Если пара прошла больше 15 минут назад — игнорируем
+        if (totalMinutes >= -BUFFER) {
+          if (totalMinutes < minDistance) minDistance = totalMinutes;
+        }
+      }
     }
-    return min;
+
+    return minDistance;
   };
 
-  // сортировка
+  const sortFn = (a: Discipline, b: Discipline) =>
+    getNearestPairDistance(a.schedule) - getNearestPairDistance(b.schedule);
+
   const sorted = useMemo(() => {
     const red: Discipline[] = [];
     const purple: Discipline[] = [];
@@ -56,15 +86,13 @@ export default function Home() {
       else green.push(d);
     });
 
-    const sortFn = (a: Discipline, b: Discipline) =>
-      getNearestDayDistance(a.days) - getNearestDayDistance(b.days);
-
     return [
       ...red.sort(sortFn),
       ...purple.sort(sortFn),
       ...green.sort(sortFn),
     ];
   }, [disciplines]);
+
 
   const handleSelect = (name: string) => {
     const existing = disciplines.find((d) => d.name === name);
@@ -78,7 +106,7 @@ export default function Home() {
       name,
       task: "",
       isLongTerm: false,
-      days: [],
+      schedule: {},
     };
 
     update([...disciplines, newD]);
@@ -93,13 +121,13 @@ export default function Home() {
       <h1 className="text-3xl font-bold -mb-2">Домашки</h1>
       <p className="mb-4">Всего дисциплин: {disciplines.length}</p>
 
-      {countWithTasks > disciplines.length/2  && (
+      {countWithTasks > disciplines.length / 2 && (
         <div className="bg-amber-200/60 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">У тебя много невыполненных заданий!</p>
         </div>
       )}
 
-      {countWithTasks == 0 && disciplines.length > 0 && (
+      {countWithTasks === 0 && disciplines.length > 0 && (
         <div className="bg-green-200/60 text-green-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">Так держать! У тебя нет невыполненных заданий.</p>
         </div>
@@ -153,11 +181,11 @@ export default function Home() {
         discipline={edit}
         isOpen={!!edit}
         onClose={() => setEdit(null)}
-        onSave={(task, isLongTerm, days) => {
+        onSave={(task, isLongTerm, schedule) => {
           update(
             disciplines.map((x) =>
               edit && x.id === edit.id
-                ? { ...x, task, isLongTerm, days }
+                ? { ...x, task, isLongTerm, schedule }
                 : x
             )
           );

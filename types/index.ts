@@ -9,5 +9,7 @@ export type Discipline = {
   name: string;
   task: string;
   isLongTerm: boolean;
-  days?: number[]; // ← новое
+
+  /** Расписание: ключ — день недели (1 = Пн, ..., 7 = Вс), значение — массив выбранных номеров пар */
+  schedule?: Record<number, number[]>; 
 };
