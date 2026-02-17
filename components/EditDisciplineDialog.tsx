@@ -92,7 +92,7 @@ export default function EditDisciplineDialog({
       isOpen={isOpen}
       onClose={onClose}
       className="rounded-xl"
-      placement="center"
+      placement="bottom"
       shouldBlockScroll={true}
       hideCloseButton={true}
       classNames={{
