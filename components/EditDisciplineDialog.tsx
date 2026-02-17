@@ -12,6 +12,7 @@ import { Textarea } from "@heroui/input";
 import { Checkbox } from "@heroui/checkbox";
 import { useEffect, useState } from "react";
 import { Discipline } from "@/types";
+import { Chip } from "@heroui/chip";
 
 type Props = {
   discipline: Discipline | null;
@@ -25,7 +26,7 @@ type Props = {
   onDelete?: () => void;
 };
 
-const daysLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+const daysLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
 const pairs = [1, 2, 3, 4, 5, 6]; // номера пар
 
 export default function EditDisciplineDialog({
@@ -49,24 +50,42 @@ export default function EditDisciplineDialog({
 
   if (!discipline) return null;
 
-  function toggleDay(day: number) {
-    setSchedule((prev) => {
-      const copy = { ...prev };
-      if (copy[day]) delete copy[day]; // выключаем день
-      else copy[day] = []; // включаем день без пар
-      return copy;
-    });
-  }
+  // function toggleDay(day: number) {
+  //   setSchedule((prev) => {
+  //     const copy = { ...prev };
+  //     if (copy[day]) delete copy[day]; // выключаем день
+  //     else copy[day] = []; // включаем день без пар
+  //     return copy;
+  //   });
+  // }
 
   function togglePair(day: number, pair: number) {
     setSchedule((prev) => {
       const dayPairs = prev[day] ?? [];
-      const newPairs = dayPairs.includes(pair)
-        ? dayPairs.filter((p) => p !== pair)
-        : [...dayPairs, pair];
-      return { ...prev, [day]: newPairs };
+
+      let newPairs: number[];
+
+      if (dayPairs.includes(pair)) {
+        // убираем пару
+        newPairs = dayPairs.filter((p) => p !== pair);
+      } else {
+        // добавляем пару
+        newPairs = [...dayPairs, pair];
+      }
+
+      const updated = { ...prev };
+
+      if (newPairs.length === 0) {
+        // если пар не осталось — удаляем день
+        delete updated[day];
+      } else {
+        updated[day] = newPairs;
+      }
+
+      return updated;
     });
   }
+
 
   return (
     <Modal
@@ -75,9 +94,11 @@ export default function EditDisciplineDialog({
       className="rounded-3xl"
       placement="auto"
       shouldBlockScroll={true}
+      hideCloseButton={true}
       classNames={{
         base: "m-2",
-        wrapper: "max-w-screen"
+        wrapper: "max-w-screen",
+        header: "text-2xl",
       }}
       >
       <ModalContent className="p-4 gap-4">
@@ -101,31 +122,33 @@ export default function EditDisciplineDialog({
             />
 
           {/* дни недели и пары */}
-          <div>
+          <div className="w-full">
             <p className="text-lg mb-2">Дни занятий</p>
 
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 items-center w-full">
               {daysLabels.map((label, i) => {
                 const day = i + 1;
                 const dayActive = !!schedule[day];
 
                 return (
-                  <div key={day} className="flex gap-3">
+                  <div key={day} className="flex w-full items-center gap-3">
                     {/* кнопка дня */}
-                    <Button
+                    <Chip
                       className="font-medium"
-                      size="md"
+                      classNames={{
+                        content: "w-10"
+                      }}
+                      size="lg"
                       radius="full"
-                      variant={dayActive ? "solid" : "flat"}
-                      color={dayActive ? "primary" : "default"}
-                      onPress={() => toggleDay(day)}
+                      variant="flat"
+                      color={schedule[day]?.length ? "primary" : "default"}
                     >
                       {label}
-                    </Button>
+                    </Chip>
 
                     {/* кнопки пар под выбранным днём */}
                     {/* {dayActive && ( */}
-                      <div className="flex gap-1 flex-wrap items-center">
+                      <div className="flex gap-2 items-center">
                         {pairs.map((p) => {
                           const pairActive = schedule[day]?.includes(p);
                           return (
@@ -135,8 +158,7 @@ export default function EditDisciplineDialog({
                               variant={pairActive ? "bordered" : "flat"}
                               color={pairActive ? "primary" : "default"}
                               onPress={() => togglePair(day, p)}
-                              isDisabled={!dayActive}
-                              className="flex items-center justify-center w-9 h-9 p-0 min-w-0 text-xs fomt-medium"
+                              className="flex items-center justify-center w-9 h-9 p-0 min-w-0 text-xs font-medium"
                             >{pairActive && p}
                             </Button>
                           );
