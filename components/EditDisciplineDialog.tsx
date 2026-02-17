@@ -91,14 +91,14 @@ export default function EditDisciplineDialog({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      className="rounded-3xl"
+      className="rounded-xl"
       placement="auto"
       shouldBlockScroll={true}
       hideCloseButton={true}
       classNames={{
         base: "m-2",
         wrapper: "max-w-screen",
-        header: "text-2xl",
+        header: "text-xl line-clamp-2 pb-0",
       }}
       >
       <ModalContent className="p-4 gap-4">
@@ -117,7 +117,7 @@ export default function EditDisciplineDialog({
             onValueChange={setTask}
             classNames={{
               label: "text-lg",
-              input: "text-lg",
+              input: "text-base",
             }}
             />
 
