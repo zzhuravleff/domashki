@@ -1,2 +1,2 @@
 // lib/version.ts
-export const version = "1.1.15c";
+export const version = "1.1.15d";
