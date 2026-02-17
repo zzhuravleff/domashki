@@ -92,13 +92,12 @@ export default function EditDisciplineDialog({
       isOpen={isOpen}
       onClose={onClose}
       className="rounded-xl"
-      placement="auto"
+      placement="center"
       shouldBlockScroll={true}
       hideCloseButton={true}
       classNames={{
         base: "m-2",
-        wrapper: "max-w-screen",
-        header: "text-xl line-clamp-2 pb-0",
+        wrapper: "max-w-screen"
       }}
       >
       <ModalContent className="p-4 gap-4">
