@@ -69,22 +69,40 @@ export default function EditDisciplineDialog({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="rounded-3xl" placement="auto">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="rounded-3xl"
+      placement="auto"
+      shouldBlockScroll={true}
+      classNames={{
+        base: "m-2",
+        wrapper: "max-w-screen"
+      }}
+      >
       <ModalContent className="p-4 gap-4">
         <ModalHeader className="p-0 m-0 pb-2 line-clamp-2 leading-5 max-w-72">
           {discipline.name}
         </ModalHeader>
 
         <ModalBody className="p-0 m-0 space-y-4">
-          <Textarea label="Задание" value={task} onValueChange={setTask} />
-
-          <Checkbox isSelected={longTerm} onValueChange={setLongTerm}>
-            Долгосрочно
-          </Checkbox>
+          <Textarea
+            label="Задание"
+            variant="faded"
+            value={task}
+            labelPlacement="outside"
+            size="lg"
+            radius="lg"
+            onValueChange={setTask}
+            classNames={{
+              label: "text-lg",
+              input: "text-lg",
+            }}
+            />
 
           {/* дни недели и пары */}
           <div>
-            <p className="text-sm mb-2 text-default-500">Дни занятий</p>
+            <p className="text-lg mb-2">Дни занятий</p>
 
             <div className="flex flex-wrap gap-1">
               {daysLabels.map((label, i) => {
@@ -92,7 +110,7 @@ export default function EditDisciplineDialog({
                 const dayActive = !!schedule[day];
 
                 return (
-                  <div key={day} className="flex gap-1">
+                  <div key={day} className="flex gap-3">
                     {/* кнопка дня */}
                     <Button
                       className="font-medium"
@@ -106,7 +124,7 @@ export default function EditDisciplineDialog({
                     </Button>
 
                     {/* кнопки пар под выбранным днём */}
-                    {dayActive && (
+                    {/* {dayActive && ( */}
                       <div className="flex gap-1 flex-wrap items-center">
                         {pairs.map((p) => {
                           const pairActive = schedule[day]?.includes(p);
@@ -117,18 +135,24 @@ export default function EditDisciplineDialog({
                               variant={pairActive ? "bordered" : "flat"}
                               color={pairActive ? "primary" : "default"}
                               onPress={() => togglePair(day, p)}
-                              className="flex items-center justify-center w-6 h-7 p-0 min-w-0 text-xs fomt-medium"
+                              isDisabled={!dayActive}
+                              className="flex items-center justify-center w-9 h-9 p-0 min-w-0 text-xs fomt-medium"
                             >{pairActive && p}
                             </Button>
                           );
                         })}
                       </div>
-                    )}
+                    {/* )} */}
                   </div>
                 );
               })}
             </div>
           </div>
+
+          <Checkbox isSelected={longTerm} onValueChange={setLongTerm} size="lg">
+            Долгосрочно
+          </Checkbox>
+          
         </ModalBody>
 
         <ModalFooter className="p-0 m-0 pt-2 flex justify-between">
@@ -156,7 +180,7 @@ export default function EditDisciplineDialog({
           </Button>
 
           <Button
-            color="success"
+            color="primary"
             radius="full"
             size="lg"
             className="font-medium"

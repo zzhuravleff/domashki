@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import { Button } from "@heroui/button";
 import { Inter } from 'next/font/google';
 import "../styles/globals.css";
 import Head from "next/head";
