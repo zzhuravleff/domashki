@@ -100,7 +100,7 @@ export default function EditDisciplineDialog({
         wrapper: "max-w-screen"
       }}
       >
-      <ModalContent className="p-4 gap-4 fixed inset-0">
+      <ModalContent className="p-4 gap-4">
         <ModalHeader className="p-0 m-0 pb-2 line-clamp-2 leading-5 max-w-72">
           {discipline.name}
         </ModalHeader>
