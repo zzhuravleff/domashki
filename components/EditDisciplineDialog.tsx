@@ -103,7 +103,7 @@ export default function EditDisciplineDialog({
       }}
       >
       <ModalContent className="p-4 gap-4 rounded-4xl">
-        <ModalHeader className="p-0 m-0 pb-2 line-clamp-2 leading-3 max-w-72 text-xl">
+        <ModalHeader className="p-0 m-0 line-clamp-2 leading-3 max-w-72 text-xl">
           {discipline.name}
         </ModalHeader>
 
