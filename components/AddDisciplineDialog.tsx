@@ -32,13 +32,25 @@ export default function AddDisciplineDialog({
   onSelect,
 }: Props) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} placement="auto" className="rounded-3xl">
-      <ModalContent className="p-4">
-        <ModalHeader className="m-0 p-0 pb-2">Добавить дисциплину</ModalHeader>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="rounded-xl"
+      placement="bottom"
+      shouldBlockScroll={true}
+      hideCloseButton={true}
+      classNames={{
+        base: "m-2",
+        wrapper: "max-w-screen"
+      }}
+      >
+      <ModalContent className="p-4 rounded-4xl">
+        <ModalHeader className="m-0 p-0 pb-2 text-xl">Добавить дисциплину</ModalHeader>
 
         <ModalBody className="p-0 m-0">
           <Autocomplete
             label="Выберите дисциплину"
+            radius="lg"
             onSelectionChange={(key) => {
               if (!key) return;
               onSelect(String(key));

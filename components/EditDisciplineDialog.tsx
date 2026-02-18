@@ -102,8 +102,8 @@ export default function EditDisciplineDialog({
         wrapper: "max-w-screen"
       }}
       >
-      <ModalContent className="p-4 gap-4">
-        <ModalHeader className="p-0 m-0 pb-2 line-clamp-2 leading-5 max-w-72">
+      <ModalContent className="p-4 gap-4 rounded-4xl">
+        <ModalHeader className="p-0 m-0 pb-2 line-clamp-2 leading-3 max-w-72 text-xl">
           {discipline.name}
         </ModalHeader>
 
@@ -116,10 +116,9 @@ export default function EditDisciplineDialog({
 
           {selectedTab === "task" && 
           <Textarea
-            // label="Задание"
-            variant="faded"
+            variant="flat"
             value={task}
-            labelPlacement="outside"
+            placeholder="Введите ваше задание"
             size="lg"
             radius="lg"
             minRows={6}
@@ -151,7 +150,7 @@ export default function EditDisciplineDialog({
                   <div key={day} className="flex w-full items-center gap-3">
                     {/* кнопка дня */}
                     <Chip
-                      className="font-medium"
+                      className="font-medium items-center text-center"
                       classNames={{
                         content: "w-10"
                       }}
