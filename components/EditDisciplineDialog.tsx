@@ -9,6 +9,7 @@ import {
 } from "@heroui/modal";
 import { Button } from "@heroui/button";
 import { Textarea } from "@heroui/input";
+import {Tabs, Tab} from "@heroui/tabs";
 import { Checkbox } from "@heroui/checkbox";
 import { useEffect, useState } from "react";
 import { Discipline } from "@/types";
@@ -39,6 +40,7 @@ export default function EditDisciplineDialog({
   const [task, setTask] = useState("");
   const [longTerm, setLongTerm] = useState(false);
   const [schedule, setSchedule] = useState<Record<number, number[]>>({});
+  const [selectedTab, setSelectedTab] = useState("task");
 
   // обновляем состояние, когда открываем другую дисциплину
   useEffect(() => {
@@ -106,28 +108,44 @@ export default function EditDisciplineDialog({
         </ModalHeader>
 
         <ModalBody className="p-0 m-0 space-y-4">
+
+          <Tabs className="w-full" classNames={{tabList:"w-full"}} color="primary" radius="full" size="lg" selectedKey={selectedTab} onSelectionChange={(key) => setSelectedTab(key as string)}>
+            <Tab title="Задание" key="task" />
+            <Tab title="Дни занятий" key="days" />
+          </Tabs>
+
+          {selectedTab === "task" && 
           <Textarea
-            label="Задание"
+            // label="Задание"
             variant="faded"
             value={task}
             labelPlacement="outside"
             size="lg"
             radius="lg"
+            minRows={6}
             onValueChange={setTask}
             classNames={{
               label: "text-lg",
               input: "text-base",
             }}
             />
+          }
+
+          {selectedTab === "task" && (
+            <Checkbox isSelected={longTerm} onValueChange={setLongTerm} size="lg">
+              Долгосрочно
+            </Checkbox>
+          )}
 
           {/* дни недели и пары */}
+          {selectedTab === "days" && (
           <div className="w-full">
-            <p className="text-lg mb-2">Дни занятий</p>
+            {/* <p className="text-lg mb-2">Дни занятий</p> */}
 
             <div className="flex flex-wrap gap-1 items-center w-full">
               {daysLabels.map((label, i) => {
                 const day = i + 1;
-                const dayActive = !!schedule[day];
+                // const dayActive = !!schedule[day];
 
                 return (
                   <div key={day} className="flex w-full items-center gap-3">
@@ -169,10 +187,7 @@ export default function EditDisciplineDialog({
               })}
             </div>
           </div>
-
-          <Checkbox isSelected={longTerm} onValueChange={setLongTerm} size="lg">
-            Долгосрочно
-          </Checkbox>
+          )}
           
         </ModalBody>
 
