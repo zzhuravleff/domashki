@@ -117,9 +117,7 @@ export default function Home() {
 
   return (
     <>
-    <div className="fixed h-16 bg-gradient-to-b from-gray-100 to-transparent w-7xl mt-0 top-0 z-10"></div>
-    {((countWithTasks > disciplines.length / 2) || (countWithTasks === 0 && disciplines.length > 0)) && (<div className="fixed h-24 bg-gradient-to-b from-gray-100 via-gray-100 to-transparent w-7xl mt-0 top-0 z-10"></div>
-    )}
+    <div className="fixed h-24 bg-gradient-to-b from-gray-100 to-transparent w-7xl mt-0 top-0 z-10"></div>
 
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col gap-4 items-center relative">
       <Chip variant="flat" className="z-10">Версия: {version}</Chip>
