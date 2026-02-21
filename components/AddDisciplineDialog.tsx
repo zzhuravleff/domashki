@@ -44,13 +44,14 @@ export default function AddDisciplineDialog({
         wrapper: "max-w-screen"
       }}
       >
-      <ModalContent className="p-4 rounded-4xl">
+      <ModalContent className="p-4 rounded-4xl mb-8">
         <ModalHeader className="m-0 p-0 pb-2 text-xl">Добавить дисциплину</ModalHeader>
 
         <ModalBody className="p-0 m-0">
           <Autocomplete
             label="Выберите дисциплину"
             radius="lg"
+            size="lg"
             onSelectionChange={(key) => {
               if (!key) return;
               onSelect(String(key));
