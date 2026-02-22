@@ -1,8 +1,9 @@
 "use client";
 
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/modal";
-import { Autocomplete, AutocompleteItem } from "@heroui/autocomplete";
 import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { useState } from "react";
 import { ScrollShadow } from "@heroui/scroll-shadow";
 
 const DISCIPLINES = [
@@ -33,6 +34,13 @@ export default function AddDisciplineDialog({
   onClose,
   onSelect,
 }: Props) {
+
+  const [search, setSearch] = useState("");
+
+  const filtered = DISCIPLINES.filter((d) =>
+    d.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <Modal
       isOpen={isOpen}
@@ -43,7 +51,7 @@ export default function AddDisciplineDialog({
       hideCloseButton={true}
       classNames={{
         base: "m-2",
-        wrapper: "max-w-screen"
+        wrapper: "max-w-screen",
       }}
       >
       <ModalContent className="p-4 rounded-4xl mb-8">
@@ -64,14 +72,25 @@ export default function AddDisciplineDialog({
               <AutocompleteItem key={d}>{d}</AutocompleteItem>
             ))}
           </Autocomplete> */}
-          <ScrollShadow className="h-[300px]">
-            {DISCIPLINES.map((d) => (
+
+          <Input
+            placeholder="Поиск..."
+            size="lg"
+            radius="lg"
+            variant="faded"
+            value={search}
+            onValueChange={setSearch}
+            className="mb-3"
+          />
+
+          <ScrollShadow className="h-[300px] -mt-2">
+            {filtered.map((d) => (
               <Button
                 key={d}
                 className="my-1"
                 size="lg"
                 variant="flat"
-                fullWidth={true}
+                fullWidth
                 onPress={() => {
                   onSelect(d);
                   onClose();

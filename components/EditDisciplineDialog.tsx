@@ -107,11 +107,11 @@ export default function EditDisciplineDialog({
       hideCloseButton={true}
       classNames={{
         base: "m-2",
-        wrapper: "max-w-screen"
+        wrapper: "max-w-screen",
       }}
       >
       <ModalContent className="p-4 gap-4 rounded-4xl mb-8">
-        <ModalHeader className="p-0 m-0 line-clamp-2 leading-3 max-w-72 text-xl">
+        <ModalHeader className="p-0 m-0 line-clamp-2 leading-3 text-xl">
           {discipline.name}
         </ModalHeader>
 
