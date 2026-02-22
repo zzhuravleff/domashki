@@ -73,7 +73,15 @@ export default function AddDisciplineDialog({
             ))}
           </Autocomplete> */}
 
-          
+          <Input
+            placeholder="Поиск..."
+            size="lg"
+            radius="lg"
+            variant="faded"
+            value={search}
+            onValueChange={setSearch}
+            className="mb-3"
+          />
 
           <ScrollShadow className="h-[256px] -mt-2">
             {filtered.map((d) => (
@@ -91,18 +99,7 @@ export default function AddDisciplineDialog({
                 <p className="truncate">{d}</p>
               </Button>
             ))}
-          </ScrollShadow>
-
-          <Input
-            placeholder="Поиск..."
-            size="lg"
-            radius="lg"
-            variant="faded"
-            value={search}
-            onValueChange={setSearch}
-            className="mb-3"
-          />
-          
+          </ScrollShadow>      
         </ModalBody>
       </ModalContent>
     </Modal>
