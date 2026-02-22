@@ -83,7 +83,7 @@ export default function AddDisciplineDialog({
             className="mb-3"
           />
 
-          <ScrollShadow className="h-[300px] -mt-2">
+          <ScrollShadow className="h-[256px] -mt-2">
             {filtered.map((d) => (
               <Button
                 key={d}
