@@ -12,6 +12,8 @@ import { ExportButton } from "@/components/ExportButton";
 import { ImportButton } from "@/components/ImportButton";
 import { ClearAllButton } from "@/components/ClearDisciplineButton";
 import { Chip } from "@heroui/chip";
+import { Progress } from "@heroui/progress";
+import Image from "next/image";
 
 // Время пар
 const PAIR_TIMES: Record<number, [number, number]> = {
@@ -122,7 +124,7 @@ export default function Home() {
       <h1 className="text-3xl font-bold -mb-2 z-10">Домашки</h1>
       <p className="mb-4 z-10">Всего дисциплин: {disciplines.length}</p>
 
-      {countWithTasks > disciplines.length / 2 && (
+      {/* {countWithTasks > disciplines.length / 2 && (
         <div className="bg-amber-200/60 text-amber-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">У тебя много невыполненных заданий!</p>
         </div>
@@ -132,7 +134,55 @@ export default function Home() {
         <div className="bg-green-200/60 text-green-800 shadow-none rounded-3xl p-4 flex flex-col gap-2 justify-between sticky top-4 backdrop-blur-sm z-10">
           <p className="text-lg font-medium">Так держать! У тебя нет невыполненных заданий.</p>
         </div>
+      )} */}
+
+      {countWithTasks == 0 && (
+        <div className="mb-4">
+          <Image src="/petOne.png" alt="empty" width={300} height={300} />
+          <div className="flex flex-col items-center gap-2">
+            <Chip variant="flat" size="lg">Котейкин</Chip>
+            <Progress className="max-w-sm" aria-label="Loading..." color="success" size="md" value={100} />
+          </div>
+        </div>
       )}
+      {(countWithTasks > 0 && countWithTasks <= disciplines.length*0.33) && (
+        <div className="mb-4">
+          <Image src="/petTwo.png" alt="empty" width={300} height={300} />
+          <div className="flex flex-col items-center gap-2">
+            <Chip variant="flat" size="lg">Котейкин</Chip>
+            <Progress className="max-w-lg" aria-label="Loading..." size="md" value={75} classNames={{indicator: "bg-lime-500"}} />
+          </div>
+        </div>
+      )}
+      {(countWithTasks > disciplines.length*0.33 && countWithTasks <= disciplines.length*0.66) && (
+        <div className="mb-4">
+          <Image src="/petThree.png" alt="empty" width={300} height={300} />
+          <div className="flex flex-col items-center gap-2">
+            <Chip variant="flat" size="lg">Котейкин</Chip>
+            <Progress className="max-w-lg" aria-label="Loading..." size="md" value={50} classNames={{indicator: "bg-yellow-500"}} />
+          </div>
+        </div>
+      )}
+      {(countWithTasks > disciplines.length*0.66 && countWithTasks < disciplines.length) && (
+        <div className="mb-4">
+          <Image src="/petFour.png" alt="empty" width={300} height={300} />
+          <div className="flex flex-col items-center gap-2">
+            <Chip variant="flat" size="lg">Котейкин</Chip>
+            <Progress className="max-w-lg" aria-label="Loading..." size="md" value={25} classNames={{indicator: "bg-amber-500"}} />
+          </div>
+        </div>
+      )}
+      {countWithTasks == disciplines.length && (
+        <div className="mb-4">
+          <Image src="/petOne.png" alt="empty" width={300} height={300} />
+          <div className="flex flex-col items-center gap-2">
+            <Chip variant="flat" size="lg">Котейкин</Chip>
+            <Progress className="max-w-lg" aria-label="Loading..." color="danger" size="md" value={0} />
+          </div>
+        </div>
+      )}
+
+
 
       <section className="max-w-3xl w-full flex flex-col gap-2">
         {sorted.map((d) => (
